@@ -108,7 +108,7 @@ This EDA is **Week 1** of a 30-day portfolio building project. Next:
 
 ## 👤 Author
 
-**[Your Name]**  
+**Anas Sameed**  
 MSc Botany | Transitioning into Data Science & Bioinformatics  
 📍 Bengaluru, India
 
