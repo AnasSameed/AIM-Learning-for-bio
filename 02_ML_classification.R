@@ -1,0 +1,739 @@
+############################################################
+#  MACHINE LEARNING — DNA METHYLATION CLASSIFICATION
+#  Task    : Normal vs Cancer (Prostate)
+#  Models  : Logistic Regression, Random Forest, SVM
+#  Dataset : GSE216050 + additional GEO cohorts
+#
+#  Supervisor: Dr Aniruddha Chatterjee | University of Otago
+#  Analyst  : Anas Sameed
+############################################################
+
+# ─────────────────────────────────────────────────────────
+#  0. INSTALL PACKAGES (run once, then comment out)
+# ─────────────────────────────────────────────────────────
+
+# install.packages(c(
+#   "data.table","dplyr","tidyr","ggplot2","pheatmap",
+#   "caret","randomForest","e1071","glmnet",
+#   "pROC","ggrepel","RColorBrewer","viridis",
+#   "GEOquery","limma"
+# ))
+# BiocManager::install(c("GEOquery","limma","minfi"))
+
+# ─────────────────────────────────────────────────────────
+#  1. LOAD LIBRARIES
+# ─────────────────────────────────────────────────────────
+
+suppressPackageStartupMessages({
+  library(data.table)
+  library(dplyr)
+  library(tidyr)
+  library(ggplot2)
+  library(pheatmap)
+  library(caret)
+  library(randomForest)
+  library(e1071)
+  library(glmnet)
+  library(pROC)
+  library(ggrepel)
+  library(RColorBrewer)
+  library(viridis)
+  library(GEOquery)
+  library(limma)
+})
+
+set.seed(42)
+
+# ─────────────────────────────────────────────────────────
+#  2. GLOBAL SETTINGS — EDIT THESE TO MATCH YOUR FILES
+# ─────────────────────────────────────────────────────────
+
+# Output folder
+out_dir <- file.path("ML_results", format(Sys.Date(), "%Y%m%d"))
+dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+
+# Number of top variable CpGs to keep for ML
+# 1000 is safe for small datasets; increase to 5000 if you have >100 samples
+N_TOP_CPGS <- 1000
+
+# Cross-validation folds
+CV_FOLDS <- 5
+
+# Colour palette
+group_cols <- c(Normal = "#2166AC", Cancer = "#D6604D")
+
+cat("=============================================================\n")
+cat(" ML Methylation Classification Pipeline\n")
+cat(" Output:", out_dir, "\n")
+cat("=============================================================\n\n")
+
+# ─────────────────────────────────────────────────────────
+#  3. DATA LOADING
+#
+#  TWO OPTIONS depending on your dataset type:
+#
+#  OPTION A — RRBS txt files (like GSE216050)
+#             Use load_rrbs_samples()
+#
+#  OPTION B — GEO Series Matrix files (450K / EPIC arrays)
+#             Use load_geo_series_matrix()
+#
+#  Read both functions below, then go to STEP 4 and
+#  call whichever applies to each of your datasets.
+# ─────────────────────────────────────────────────────────
+
+# ── OPTION A: Load RRBS .txt files (bismark coverage format) ──
+load_rrbs_samples <- function(file_list,    # named list: list(Sample1="file1.txt", ...)
+                               labels,       # named vector: c(Sample1="Normal", ...)
+                               min_cov = 10) {
+  cat("Loading RRBS files...\n")
+  sample_dfs <- list()
+  for (sname in names(file_list)) {
+    f <- file_list[[sname]]
+    if (!file.exists(f)) stop("File not found: ", f)
+    dt <- fread(f, header = FALSE, showProgress = FALSE)
+
+    if (ncol(dt) >= 6) {
+      setnames(dt, 1:6, c("chr","start","end","meth_pct","meth_reads","unmeth_reads"))
+      dt[, coverage := meth_reads + unmeth_reads]
+    } else {
+      setnames(dt, 1:5, c("chr","start","end","meth_pct","meth_reads"))
+      dt[, coverage := meth_reads]
+    }
+
+    dt <- dt[coverage >= min_cov]
+    keep_chr <- c(paste0("chr", 1:22), "chrX")
+    dt <- dt[chr %in% keep_chr]
+    dt[, cpg_id := paste0(chr, ":", start)]
+    dt[, beta := round(meth_pct / 100, 4)]
+    sample_dfs[[sname]] <- dt[, .(cpg_id, beta)]
+    setnames(sample_dfs[[sname]], "beta", sname)
+    cat("  Loaded:", sname, "—", nrow(sample_dfs[[sname]]), "CpGs\n")
+  }
+
+  # Merge all samples on common CpGs
+  merged <- Reduce(function(x, y) merge(x, y, by = "cpg_id"), sample_dfs)
+  cat("  Common CpGs across all RRBS samples:",
+      format(nrow(merged), big.mark = ","), "\n\n")
+
+  # Transpose to samples × CpGs matrix
+  mat <- t(as.matrix(merged[, -1]))
+  colnames(mat) <- merged$cpg_id
+  rownames(mat) <- names(file_list)
+
+  # Build metadata
+  meta <- data.frame(
+    sample = names(labels),
+    group  = unname(labels),
+    stringsAsFactors = FALSE
+  )
+  meta$group <- factor(meta$group, levels = c("Normal", "Cancer"))
+
+  return(list(matrix = mat, meta = meta))
+}
+
+# ── OPTION B: Load GEO Series Matrix (450K / EPIC array) ──
+load_geo_series_matrix <- function(geo_id,
+                                   normal_keywords = c("normal","benign","adjacent","non-tumor","non-tumour","healthy"),
+                                   cancer_keywords = c("cancer","tumor","tumour","carcinoma","malignant","prostate cancer")) {
+  cat("Downloading GEO dataset:", geo_id, "...\n")
+
+  # Download via GEOquery (caches locally)
+  gse <- getGEO(geo_id, GSEMatrix = TRUE, getGPL = FALSE)
+  eset <- gse[[1]]
+
+  # Extract beta matrix (CpGs × samples)
+  beta_mat <- exprs(eset)
+
+  # If values look like M-values (range roughly -10 to 10), convert to beta
+  if (max(beta_mat, na.rm = TRUE) > 2) {
+    cat("  Detected M-values — converting to beta values\n")
+    beta_mat <- 2^beta_mat / (2^beta_mat + 1)
+  }
+
+  # Clamp to [0,1] to handle any out-of-range values
+  beta_mat[beta_mat < 0] <- 0
+  beta_mat[beta_mat > 1] <- 1
+
+  # Extract phenotype data
+  pdata <- pData(eset)
+  cat("  Samples:", ncol(beta_mat), "| CpGs:", nrow(beta_mat), "\n")
+  cat("  Phenotype columns available:\n")
+  print(colnames(pdata))
+
+  # ── AUTO-LABEL: Try to detect Normal vs Cancer from characteristics ──
+  # Concatenate all character columns into one searchable string per sample
+  char_cols <- grep("characteristics|title|source|disease|tissue|type",
+                    colnames(pdata), ignore.case = TRUE, value = TRUE)
+
+  if (length(char_cols) > 0) {
+    combined_text <- apply(pdata[, char_cols, drop = FALSE], 1,
+                           function(x) tolower(paste(x, collapse = " ")))
+  } else {
+    combined_text <- tolower(apply(pdata, 1, paste, collapse = " "))
+  }
+
+  labels <- rep(NA_character_, length(combined_text))
+  labels[grepl(paste(normal_keywords, collapse = "|"), combined_text)] <- "Normal"
+  labels[grepl(paste(cancer_keywords, collapse = "|"), combined_text)] <- "Cancer"
+
+  labeled_mask <- !is.na(labels)
+  cat("  Auto-labeled:", sum(labels == "Normal", na.rm = TRUE), "Normal |",
+      sum(labels == "Cancer", na.rm = TRUE), "Cancer |",
+      sum(is.na(labels)), "unassigned\n")
+
+  if (sum(labeled_mask) < 10) {
+    cat("\n  WARNING: Auto-labelling found fewer than 10 samples.\n")
+    cat("  Please manually inspect pData and set labels.\n")
+    cat("  Use: View(pData(gse[[1]])) in RStudio\n\n")
+    return(NULL)
+  }
+
+  # Filter to labeled samples only
+  beta_mat   <- beta_mat[, labeled_mask, drop = FALSE]
+  labels_filt <- labels[labeled_mask]
+
+  # Remove CpGs with >20% missing values, then impute remaining NAs with row median
+  na_frac <- rowMeans(is.na(beta_mat))
+  beta_mat <- beta_mat[na_frac <= 0.2, ]
+  for (i in seq_len(nrow(beta_mat))) {
+    na_idx <- is.na(beta_mat[i, ])
+    if (any(na_idx))
+      beta_mat[i, na_idx] <- median(beta_mat[i, !na_idx], na.rm = TRUE)
+  }
+
+  # Transpose to samples × CpGs
+  mat <- t(beta_mat)
+  rownames(mat) <- colnames(beta_mat)
+
+  meta <- data.frame(
+    sample = colnames(beta_mat),
+    group  = factor(labels_filt, levels = c("Normal", "Cancer")),
+    dataset = geo_id,
+    stringsAsFactors = FALSE
+  )
+
+  cat("  Final matrix:", nrow(mat), "samples ×", ncol(mat), "CpGs\n\n")
+  return(list(matrix = mat, meta = meta))
+}
+
+# ─────────────────────────────────────────────────────────
+#  4. LOAD YOUR DATASETS — EDIT THIS SECTION
+#
+#  Below is a template. Uncomment and edit for each
+#  dataset you have downloaded.
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 4] Loading datasets...\n")
+
+all_datasets <- list()
+
+# ── Dataset 1: GSE216050 (your RRBS files) ──────────────
+# NOTE: For this dataset the groups are Control vs Decitabine,
+# not Normal vs Cancer. Relabel as you see fit, or skip this
+# dataset and use GEO array datasets for Normal vs Cancer.
+#
+# UNCOMMENT AND EDIT file paths:
+#
+# ds1 <- load_rrbs_samples(
+#   file_list = list(
+#     C1 = "GSM6657904_data1.txt",
+#     C2 = "GSM6657906_data3.txt",
+#     C3 = "GSM6657908_data7.txt",
+#     T1 = "GSM6657905_data2.txt",
+#     T2 = "GSM6657907_data5.txt",
+#     T3 = "GSM6657909_data8.txt"
+#   ),
+#   labels = c(C1="Normal", C2="Normal", C3="Normal",
+#              T1="Cancer", T2="Cancer", T3="Cancer")
+# )
+# all_datasets[["GSE216050"]] <- ds1
+
+# ── Dataset 2: GEO array dataset (e.g. GSE76938) ─────────
+# UNCOMMENT when you have downloaded it:
+#
+# ds2 <- load_geo_series_matrix("GSE76938")
+# if (!is.null(ds2)) all_datasets[["GSE76938"]] <- ds2
+
+# ── Dataset 3: Another GEO dataset ───────────────────────
+#
+# ds3 <- load_geo_series_matrix("GSE112047")
+# if (!is.null(ds3)) all_datasets[["GSE112047"]] <- ds3
+
+# ── DEMO MODE: If no datasets loaded yet, create synthetic ──
+# This lets you test the entire ML pipeline works before
+# you have real data. DELETE this block once you have data.
+if (length(all_datasets) == 0) {
+  cat("\n*** DEMO MODE: No real data loaded — using synthetic data ***\n")
+  cat("*** Uncomment dataset blocks in STEP 4 to use real data  ***\n\n")
+
+  set.seed(42)
+  n_samples  <- 60
+  n_cpgs     <- 2000
+
+  # Simulate realistic beta value distributions
+  normal_betas <- matrix(
+    c(rbeta(n_samples/2 * n_cpgs/2, 8, 2),   # mostly methylated CpGs
+      rbeta(n_samples/2 * n_cpgs/2, 1, 8)),   # mostly unmethylated CpGs
+    nrow = n_samples/2, ncol = n_cpgs
+  )
+  cancer_betas <- matrix(
+    c(rbeta(n_samples/2 * n_cpgs/2, 5, 3),   # shifted methylation
+      rbeta(n_samples/2 * n_cpgs/2, 3, 5)),
+    nrow = n_samples/2, ncol = n_cpgs
+  )
+
+  demo_mat <- rbind(normal_betas, cancer_betas)
+  rownames(demo_mat) <- paste0("Sample_", seq_len(n_samples))
+  colnames(demo_mat) <- paste0("cg", sprintf("%08d", seq_len(n_cpgs)))
+
+  demo_meta <- data.frame(
+    sample  = rownames(demo_mat),
+    group   = factor(c(rep("Normal", n_samples/2),
+                       rep("Cancer",  n_samples/2)),
+                     levels = c("Normal","Cancer")),
+    dataset = "DEMO",
+    stringsAsFactors = FALSE
+  )
+
+  all_datasets[["DEMO"]] <- list(matrix = demo_mat, meta = demo_meta)
+}
+
+# ─────────────────────────────────────────────────────────
+#  5. COMBINE ALL DATASETS
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 5] Combining datasets...\n")
+
+if (length(all_datasets) == 1) {
+  # Single dataset — use directly
+  combined_mat  <- all_datasets[[1]]$matrix
+  combined_meta <- all_datasets[[1]]$meta
+
+} else {
+  # Multiple datasets — find common CpGs and merge
+  common_cpgs <- Reduce(intersect,
+                        lapply(all_datasets, function(d) colnames(d$matrix)))
+  cat("  Common CpGs across all datasets:", length(common_cpgs), "\n")
+
+  if (length(common_cpgs) < 100) {
+    stop("Fewer than 100 common CpGs — check that datasets use the same genome assembly and CpG IDs.")
+  }
+
+  combined_mat  <- do.call(rbind, lapply(all_datasets,
+                                         function(d) d$matrix[, common_cpgs]))
+  combined_meta <- do.call(rbind, lapply(all_datasets, `[[`, "meta"))
+}
+
+rownames(combined_meta) <- combined_meta$sample
+cat("  Total samples:", nrow(combined_mat), "\n")
+cat("  Normal:", sum(combined_meta$group == "Normal"),
+    "| Cancer:", sum(combined_meta$group == "Cancer"), "\n\n")
+
+# ─────────────────────────────────────────────────────────
+#  6. FEATURE SELECTION
+#  Keep top N most variable CpGs to reduce dimensionality
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 6] Feature selection — top", N_TOP_CPGS, "variable CpGs...\n")
+
+cpg_var   <- apply(combined_mat, 2, var, na.rm = TRUE)
+top_cpgs  <- names(sort(cpg_var, decreasing = TRUE))[1:min(N_TOP_CPGS, ncol(combined_mat))]
+feat_mat  <- combined_mat[, top_cpgs]
+
+cat("  Feature matrix:", nrow(feat_mat), "samples ×", ncol(feat_mat), "CpGs\n\n")
+
+# ── Variance distribution plot ──
+var_df <- data.frame(variance = cpg_var)
+p_var <- ggplot(var_df, aes(x = variance)) +
+  geom_histogram(bins = 80, fill = "#2166AC", alpha = 0.8) +
+  geom_vline(xintercept = min(cpg_var[top_cpgs]),
+             colour = "#D6604D", linetype = "dashed", linewidth = 0.8) +
+  annotate("text", x = min(cpg_var[top_cpgs]) * 1.1,
+           y = Inf, vjust = 2, hjust = 0,
+           label = paste0("Threshold\n(top ", N_TOP_CPGS, " CpGs)"),
+           colour = "#D6604D", size = 3.5) +
+  theme_classic(base_size = 12) +
+  labs(title = "CpG Variance Distribution",
+       subtitle = "Red dashed line = selection threshold",
+       x = "Variance", y = "Number of CpGs")
+ggsave(file.path(out_dir, "01_CpG_variance_distribution.png"),
+       p_var, width = 8, height = 5, dpi = 300)
+
+# ─────────────────────────────────────────────────────────
+#  7. EXPLORATORY ANALYSIS OF SELECTED FEATURES
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 7] Exploratory analysis of selected features...\n")
+
+# ── PCA ──
+pca     <- prcomp(feat_mat, scale. = TRUE)
+var_exp <- round(100 * summary(pca)$importance[2, 1:3], 1)
+
+pca_df <- data.frame(pca$x[, 1:3],
+                     sample  = combined_meta$sample,
+                     group   = combined_meta$group)
+
+p_pca <- ggplot(pca_df, aes(PC1, PC2, colour = group)) +
+  geom_point(size = 3.5, alpha = 0.85) +
+  stat_ellipse(aes(group = group), type = "t", linewidth = 0.8) +
+  scale_colour_manual(values = group_cols) +
+  theme_classic(base_size = 13) +
+  labs(title = "PCA — Top Variable CpGs",
+       subtitle = paste0("Coloured by group | PC1=", var_exp[1],
+                         "%, PC2=", var_exp[2], "%"),
+       x = paste0("PC1 (", var_exp[1], "%)"),
+       y = paste0("PC2 (", var_exp[2], "%)"),
+       colour = NULL)
+ggsave(file.path(out_dir, "02_PCA_ML_features.png"),
+       p_pca, width = 8, height = 6, dpi = 300)
+
+# ── Heatmap of top 50 CpGs ──
+top50 <- names(sort(cpg_var[top_cpgs], decreasing = TRUE))[1:min(50, length(top_cpgs))]
+heat_mat <- t(feat_mat[, top50])
+
+ann_col <- data.frame(Group = combined_meta$group,
+                      row.names = combined_meta$sample)
+ann_colors <- list(Group = group_cols)
+
+pheatmap(heat_mat,
+         annotation_col    = ann_col,
+         annotation_colors = ann_colors,
+         show_rownames     = FALSE,
+         show_colnames     = FALSE,
+         scale             = "row",
+         clustering_method = "ward.D2",
+         color             = colorRampPalette(rev(brewer.pal(11, "RdBu")))(100),
+         main              = "Top 50 Variable CpGs — Unsupervised Clustering",
+         filename          = file.path(out_dir, "03_Heatmap_top50_CpGs.png"),
+         width = 9, height = 7)
+
+cat("  Exploratory plots saved.\n\n")
+
+# ─────────────────────────────────────────────────────────
+#  8. PREPARE ML DATA
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 8] Preparing ML data...\n")
+
+ml_df        <- as.data.frame(feat_mat)
+ml_df$group  <- combined_meta[rownames(feat_mat), "group"]
+
+# Check class balance
+cat("  Class distribution:\n")
+print(table(ml_df$group))
+
+# ── Train / Test split (80 / 20) stratified ──
+train_idx <- createDataPartition(ml_df$group, p = 0.80, list = FALSE)
+train_df  <- ml_df[train_idx, ]
+test_df   <- ml_df[-train_idx, ]
+
+cat("  Training samples:", nrow(train_df),
+    "| Test samples:", nrow(test_df), "\n\n")
+
+# ── Cross-validation settings ──
+cv_ctrl <- trainControl(
+  method          = "cv",
+  number          = CV_FOLDS,
+  classProbs      = TRUE,
+  summaryFunction = twoClassSummary,
+  savePredictions = "final",
+  verboseIter     = FALSE
+)
+
+# ─────────────────────────────────────────────────────────
+#  9. MODEL 1 — LOGISTIC REGRESSION WITH LASSO (glmnet)
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 9] Training Model 1: Logistic Regression (LASSO)...\n")
+
+lasso_grid <- expand.grid(alpha = 1,
+                           lambda = 10^seq(-4, 0, length.out = 50))
+
+set.seed(42)
+model_lasso <- train(
+  group ~ .,
+  data      = train_df,
+  method    = "glmnet",
+  metric    = "ROC",
+  tuneGrid  = lasso_grid,
+  trControl = cv_ctrl,
+  preProcess = c("center", "scale")
+)
+
+cat("  Best lambda:", model_lasso$bestTune$lambda, "\n")
+
+# Number of non-zero features selected
+best_coef <- coef(model_lasso$finalModel,
+                  s = model_lasso$bestTune$lambda)
+n_features <- sum(best_coef != 0) - 1  # exclude intercept
+cat("  CpGs selected by LASSO:", n_features, "\n")
+
+# Predict on test set
+pred_lasso  <- predict(model_lasso, test_df)
+prob_lasso  <- predict(model_lasso, test_df, type = "prob")[, "Cancer"]
+cm_lasso    <- confusionMatrix(pred_lasso, test_df$group, positive = "Cancer")
+roc_lasso   <- roc(test_df$group, prob_lasso, levels = c("Normal","Cancer"))
+
+cat("  Test AUC:", round(auc(roc_lasso), 3), "\n\n")
+
+# ─────────────────────────────────────────────────────────
+#  10. MODEL 2 — RANDOM FOREST
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 10] Training Model 2: Random Forest...\n")
+
+rf_grid <- expand.grid(mtry = c(10, 25, 50,
+                                  floor(sqrt(ncol(feat_mat)))))
+
+set.seed(42)
+model_rf <- train(
+  group ~ .,
+  data      = train_df,
+  method    = "rf",
+  metric    = "ROC",
+  tuneGrid  = rf_grid,
+  trControl = cv_ctrl,
+  ntree     = 500,
+  importance = TRUE
+)
+
+cat("  Best mtry:", model_rf$bestTune$mtry, "\n")
+
+pred_rf  <- predict(model_rf, test_df)
+prob_rf  <- predict(model_rf, test_df, type = "prob")[, "Cancer"]
+cm_rf    <- confusionMatrix(pred_rf, test_df$group, positive = "Cancer")
+roc_rf   <- roc(test_df$group, prob_rf, levels = c("Normal","Cancer"))
+
+cat("  Test AUC:", round(auc(roc_rf), 3), "\n\n")
+
+# ── Variable importance plot ──
+imp_df <- varImp(model_rf)$importance
+imp_df$CpG <- rownames(imp_df)
+imp_df <- imp_df[order(-imp_df$Overall), ][1:20, ]
+
+p_imp <- ggplot(imp_df, aes(x = reorder(CpG, Overall), y = Overall)) +
+  geom_col(fill = "#2166AC", alpha = 0.85) +
+  coord_flip() +
+  theme_classic(base_size = 11) +
+  labs(title = "Random Forest — Top 20 Important CpGs",
+       x = NULL, y = "Mean Decrease Gini")
+ggsave(file.path(out_dir, "04_RF_variable_importance.png"),
+       p_imp, width = 8, height = 6, dpi = 300)
+
+# ─────────────────────────────────────────────────────────
+#  11. MODEL 3 — SUPPORT VECTOR MACHINE (RBF kernel)
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 11] Training Model 3: SVM (RBF kernel)...\n")
+
+svm_grid <- expand.grid(C     = c(0.01, 0.1, 1, 10),
+                         sigma = c(0.001, 0.01, 0.05))
+
+set.seed(42)
+model_svm <- train(
+  group ~ .,
+  data      = train_df,
+  method    = "svmRadial",
+  metric    = "ROC",
+  tuneGrid  = svm_grid,
+  trControl = cv_ctrl,
+  preProcess = c("center", "scale")
+)
+
+cat("  Best C:", model_svm$bestTune$C,
+    "| Best sigma:", model_svm$bestTune$sigma, "\n")
+
+pred_svm  <- predict(model_svm, test_df)
+prob_svm  <- predict(model_svm, test_df, type = "prob")[, "Cancer"]
+cm_svm    <- confusionMatrix(pred_svm, test_df$group, positive = "Cancer")
+roc_svm   <- roc(test_df$group, prob_svm, levels = c("Normal","Cancer"))
+
+cat("  Test AUC:", round(auc(roc_svm), 3), "\n\n")
+
+# ─────────────────────────────────────────────────────────
+#  12. ROC CURVE COMPARISON PLOT
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 12] Plotting ROC curves...\n")
+
+roc_plot_df <- rbind(
+  data.frame(
+    FPR   = 1 - roc_lasso$specificities,
+    TPR   = roc_lasso$sensitivities,
+    Model = paste0("LASSO (AUC=", round(auc(roc_lasso), 3), ")")
+  ),
+  data.frame(
+    FPR   = 1 - roc_rf$specificities,
+    TPR   = roc_rf$sensitivities,
+    Model = paste0("Random Forest (AUC=", round(auc(roc_rf), 3), ")")
+  ),
+  data.frame(
+    FPR   = 1 - roc_svm$specificities,
+    TPR   = roc_svm$sensitivities,
+    Model = paste0("SVM (AUC=", round(auc(roc_svm), 3), ")")
+  )
+)
+
+p_roc <- ggplot(roc_plot_df, aes(FPR, TPR, colour = Model)) +
+  geom_line(linewidth = 1.1) +
+  geom_abline(slope = 1, intercept = 0,
+              linetype = "dashed", colour = "grey60") +
+  scale_colour_manual(values = c("#1B7837","#2166AC","#D6604D")) +
+  theme_classic(base_size = 13) +
+  labs(title    = "ROC Curves — ML Model Comparison",
+       subtitle  = "Normal vs Cancer | DNA Methylation Features",
+       x = "False Positive Rate (1 − Specificity)",
+       y = "True Positive Rate (Sensitivity)",
+       colour = NULL) +
+  theme(legend.position = c(0.7, 0.25),
+        legend.background = element_rect(fill = "white", colour = "grey80"))
+ggsave(file.path(out_dir, "05_ROC_curves_comparison.png"),
+       p_roc, width = 8, height = 7, dpi = 300)
+
+# ─────────────────────────────────────────────────────────
+#  13. CONFUSION MATRIX PLOTS
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 13] Plotting confusion matrices...\n")
+
+plot_confusion <- function(cm, title, filepath) {
+  cm_tbl <- as.data.frame(cm$table)
+  colnames(cm_tbl) <- c("Predicted","Reference","Freq")
+
+  p <- ggplot(cm_tbl, aes(x = Reference, y = Predicted, fill = Freq)) +
+    geom_tile(colour = "white", linewidth = 1.5) +
+    geom_text(aes(label = Freq), size = 8, fontface = "bold", colour = "white") +
+    scale_fill_gradient(low = "#BFDBFE", high = "#1D4ED8") +
+    theme_minimal(base_size = 13) +
+    labs(title = title,
+         subtitle = paste0("Accuracy: ",
+                           round(cm$overall["Accuracy"] * 100, 1), "%  |  ",
+                           "Sensitivity: ",
+                           round(cm$byClass["Sensitivity"] * 100, 1), "%  |  ",
+                           "Specificity: ",
+                           round(cm$byClass["Specificity"] * 100, 1), "%")) +
+    theme(legend.position = "none",
+          panel.grid = element_blank())
+  ggsave(filepath, p, width = 5, height = 4, dpi = 300)
+}
+
+plot_confusion(cm_lasso, "Logistic Regression (LASSO)",
+               file.path(out_dir, "06a_Confusion_LASSO.png"))
+plot_confusion(cm_rf, "Random Forest",
+               file.path(out_dir, "06b_Confusion_RF.png"))
+plot_confusion(cm_svm, "Support Vector Machine",
+               file.path(out_dir, "06c_Confusion_SVM.png"))
+
+# ─────────────────────────────────────────────────────────
+#  14. METHYLATION SCORE PLOT
+#  Shows each sample's predicted Cancer probability
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 14] Methylation score plot...\n")
+
+score_df <- data.frame(
+  sample      = rownames(test_df),
+  group       = test_df$group,
+  RF_score    = prob_rf,
+  LASSO_score = prob_lasso,
+  SVM_score   = prob_svm
+)
+score_df <- score_df[order(score_df$RF_score), ]
+score_df$sample <- factor(score_df$sample, levels = score_df$sample)
+
+p_score <- ggplot(score_df, aes(x = sample, y = RF_score, fill = group)) +
+  geom_col(alpha = 0.85) +
+  geom_hline(yintercept = 0.5, linetype = "dashed",
+             colour = "black", linewidth = 0.7) +
+  scale_fill_manual(values = group_cols) +
+  theme_classic(base_size = 11) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7)) +
+  labs(title    = "Methylation Cancer Score per Sample",
+       subtitle  = "Random Forest predicted probability of Cancer | Dashed line = 0.5 threshold",
+       x = NULL, y = "Predicted Cancer Probability", fill = NULL)
+ggsave(file.path(out_dir, "07_Methylation_cancer_score.png"),
+       p_score, width = 10, height = 5, dpi = 300)
+
+# ─────────────────────────────────────────────────────────
+#  15. PERFORMANCE SUMMARY TABLE
+# ─────────────────────────────────────────────────────────
+
+cat("[STEP 15] Writing performance summary...\n")
+
+extract_metrics <- function(cm, roc_obj, model_name) {
+  data.frame(
+    Model       = model_name,
+    AUC_ROC     = round(as.numeric(auc(roc_obj)), 3),
+    Accuracy    = round(cm$overall["Accuracy"] * 100, 1),
+    Sensitivity = round(cm$byClass["Sensitivity"] * 100, 1),
+    Specificity = round(cm$byClass["Specificity"] * 100, 1),
+    PPV         = round(cm$byClass["Pos Pred Value"] * 100, 1),
+    NPV         = round(cm$byClass["Neg Pred Value"] * 100, 1),
+    F1          = round(cm$byClass["F1"] * 100, 1),
+    row.names   = NULL
+  )
+}
+
+perf_table <- rbind(
+  extract_metrics(cm_lasso, roc_lasso, "Logistic Regression (LASSO)"),
+  extract_metrics(cm_rf,    roc_rf,    "Random Forest"),
+  extract_metrics(cm_svm,   roc_svm,   "SVM (RBF)")
+)
+
+write.csv(perf_table,
+          file.path(out_dir, "08_Model_performance_summary.csv"),
+          row.names = FALSE)
+
+# ─────────────────────────────────────────────────────────
+#  16. CROSS-VALIDATION ROC COMPARISON (training data)
+# ─────────────────────────────────────────────────────────
+
+cv_results <- resamples(list(
+  LASSO = model_lasso,
+  RF    = model_rf,
+  SVM   = model_svm
+))
+
+cv_summary <- summary(cv_results)
+
+p_cv <- ggplot(
+  data.frame(
+    Model = rep(c("LASSO","RF","SVM"), each = CV_FOLDS),
+    ROC   = c(model_lasso$resample$ROC,
+              model_rf$resample$ROC,
+              model_svm$resample$ROC)
+  ),
+  aes(x = Model, y = ROC, fill = Model)
+) +
+  geom_boxplot(alpha = 0.7) +
+  geom_jitter(width = 0.1, size = 2, alpha = 0.7) +
+  scale_fill_manual(values = c(LASSO="#1B7837", RF="#2166AC", SVM="#D6604D")) +
+  theme_classic(base_size = 13) +
+  ylim(0, 1) +
+  geom_hline(yintercept = 0.8, linetype = "dashed", colour = "grey50") +
+  labs(title    = paste0(CV_FOLDS, "-Fold Cross-Validation AUC-ROC"),
+       subtitle  = "Training data | Higher = better",
+       x = NULL, y = "AUC-ROC") +
+  theme(legend.position = "none")
+
+ggsave(file.path(out_dir, "09_CV_ROC_comparison.png"),
+       p_cv, width = 7, height = 5, dpi = 300)
+
+# ─────────────────────────────────────────────────────────
+#  FINAL SUMMARY
+# ─────────────────────────────────────────────────────────
+
+cat("\n=============================================================\n")
+cat(" ML ANALYSIS COMPLETE\n")
+cat(" Output folder:", out_dir, "\n")
+cat("=============================================================\n\n")
+cat("MODEL PERFORMANCE ON TEST SET:\n\n")
+print(perf_table)
+cat("\nFiles generated:\n")
+for (f in list.files(out_dir)) cat("  →", f, "\n")
+cat("\nNEXT STEPS:\n")
+cat("  1. Uncomment real dataset blocks in STEP 4\n")
+cat("  2. Re-run — demo data will be replaced automatically\n")
+cat("  3. Add more GEO datasets to improve model performance\n")
+cat("  4. Share the output folder + plots with Dr Chatterjee\n")
