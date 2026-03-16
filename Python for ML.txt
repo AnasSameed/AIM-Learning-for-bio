@@ -1,0 +1,35 @@
+Day 1 · Phase 1
+Python for ML
+Master the three libraries every ML engineer uses daily. You already know Python — this is about learning the ML-specific patterns.
+What you will learn
+NumPy arrays vs Python lists — why ML uses arrays
+Pandas DataFrames — loading, slicing, grouping data
+Matplotlib — plotting distributions, scatter plots
+Why vectorization matters (speed)
+Code for today
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# NumPy — fast array math
+arr = np.array([1, 2, 3, 4, 5])
+print(arr * 2)         # [2 4 6 8 10]
+print(arr.mean())      # 3.0
+print(arr.std())       # 1.414
+
+# Matrix operations (critical for ML)
+A = np.array([[1,2],[3,4]])
+B = np.array([[5,6],[7,8]])
+print(np.dot(A, B))    # matrix multiply
+
+# Pandas — load and explore data
+df = pd.read_csv('data.csv')
+print(df.head())
+print(df.describe())   # stats summary
+print(df.isnull().sum()) # check missing
+
+# Matplotlib — visualize
+plt.figure(figsize=(8,4))
+plt.hist(df['column'], bins=30)
+plt.title('Distribution')
+plt.show()
