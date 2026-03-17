@@ -1,0 +1,48 @@
+import numpy as np
+
+# ── 1. Creating arrays ───────────────────────────────────────
+gene_expression = np.array([5.2, 3.8, 7.1, 2.4, 9.0, 4.5])
+print("Gene expression values:", gene_expression)
+
+# ── 2. Basic stats — used in EVERY ML project ────────────────
+print("\n── Stats ──")
+print("Mean:          ", np.mean(gene_expression))
+print("Std deviation: ", np.std(gene_expression))
+print("Min:           ", np.min(gene_expression))
+print("Max:           ", np.max(gene_expression))
+
+# ── 3. Normalization — scales data for ML models ─────────────
+print("\n── Z-score Normalization ──")
+normalized = (gene_expression - np.mean(gene_expression)) / np.std(gene_expression)
+print("Normalized:", normalized.round(2))
+# Values now centered around 0 — this is what ML models expect!
+
+# ── 4. 2D arrays — how datasets are stored ───────────────────
+print("\n── 2D Array (rows=samples, cols=features) ──")
+data = np.array([
+    [5.2, 3.8, 1.4],   # sample 1
+    [6.1, 2.9, 4.7],   # sample 2
+    [7.3, 3.0, 6.3],   # sample 3
+])
+print("Shape:", data.shape)           # (3 rows, 3 cols)
+print("First row:", data[0])          # first sample
+print("All col 3:", data[:, 2])       # third feature of all samples
+
+# ── 5. Filtering ─────────────────────────────────────────────
+print("\n── Filtering ──")
+high = gene_expression[gene_expression > 5.0]
+print("Genes with expression > 5:", high)
+
+# ── 6. Array math — no loops needed! ────────────────────────
+print("\n── Array Math ──")
+doubled = gene_expression * 2
+print("Doubled expression:", doubled)
+print("Sum of all:", np.sum(gene_expression))
+
+# ── 7. Random arrays — used in ML weight init ────────────────
+print("\n── Random ──")
+np.random.seed(42)
+weights = np.random.randn(5)
+print("Random weights:", weights.round(3))
+
+print("\n✅ NumPy done!")
