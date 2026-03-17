@@ -1,0 +1,109 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+
+# ── Load dataset ─────────────────────────────────────────────
+iris = load_iris()
+df = pd.DataFrame(iris.data, columns=iris.feature_names)
+df['species'] = pd.Categorical.from_codes(iris.target, iris.target_names)
+print("Shape:", df.shape)
+print(df.head())
+
+# ── 1. Distribution plot — how is each feature spread? ───────
+fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+fig.suptitle('Feature Distributions by Species', fontsize=14, fontweight='bold')
+
+features = iris.feature_names
+colors = {'setosa': '#2ecc71', 'versicolor': '#3498db', 'virginica': '#e74c3c'}
+
+for ax, feature in zip(axes.flatten(), features):
+    for species, color in colors.items():
+        subset = df[df['species'] == species][feature]
+        ax.hist(subset, alpha=0.6, label=species, color=color, bins=15)
+    ax.set_title(feature)
+    ax.set_xlabel('Value (cm)')
+    ax.set_ylabel('Count')
+    ax.legend()
+
+plt.tight_layout()
+plt.savefig('01_distributions.png', dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: 01_distributions.png")
+
+# ── 2. Boxplot — compare species side by side ────────────────
+fig, axes = plt.subplots(1, 4, figsize=(16, 5))
+fig.suptitle('Feature Comparison Across Species', fontsize=14, fontweight='bold')
+
+for ax, feature in zip(axes, features):
+    df.boxplot(column=feature, by='species', ax=ax,
+               patch_artist=True,
+               boxprops=dict(facecolor='#3498db', alpha=0.6))
+    ax.set_title(feature.replace(' (cm)', ''))
+    ax.set_xlabel('')
+
+plt.suptitle('Boxplots by Species', fontsize=14, fontweight='bold')
+plt.tight_layout()
+plt.savefig('02_boxplots.png', dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: 02_boxplots.png")
+
+# ── 3. Scatter plot — relationship between two features ───────
+plt.figure(figsize=(8, 6))
+for species, color in colors.items():
+    subset = df[df['species'] == species]
+    plt.scatter(subset['petal length (cm)'],
+                subset['petal width (cm)'],
+                label=species, color=color, alpha=0.7, s=60)
+
+plt.xlabel('Petal Length (cm)', fontsize=12)
+plt.ylabel('Petal Width (cm)', fontsize=12)
+plt.title('Petal Length vs Petal Width', fontsize=14, fontweight='bold')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig('03_scatter.png', dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: 03_scatter.png")
+
+# ── 4. Correlation heatmap — which features are related? ─────
+plt.figure(figsize=(8, 6))
+corr = df[features].corr()
+sns.heatmap(corr,
+            annot=True,
+            fmt='.2f',
+            cmap='coolwarm',
+            center=0,
+            square=True,
+            linewidths=0.5)
+plt.title('Feature Correlation Heatmap', fontsize=14, fontweight='bold')
+plt.tight_layout()
+plt.savefig('04_heatmap.png', dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: 04_heatmap.png")
+
+# ── 5. Pairplot — all features vs all features ───────────────
+sns.pairplot(df, hue='species',
+             palette={'setosa':'#2ecc71','versicolor':'#3498db','virginica':'#e74c3c'},
+             diag_kind='kde', plot_kws={'alpha':0.6})
+plt.suptitle('Pairplot — All Features vs All Features', y=1.02,
+             fontsize=14, fontweight='bold')
+plt.savefig('05_pairplot.png', dpi=150, bbox_inches='tight')
+plt.show()
+print("Saved: 05_pairplot.png")
+
+# ── 6. Key findings (print summary) ─────────────────────────
+print("\n" + "="*50)
+print("KEY FINDINGS FROM EDA")
+print("="*50)
+print("\n1. Species mean values:")
+print(df.groupby('species')[features].mean().round(2))
+
+print("\n2. Strongest correlation:")
+corr_unstacked = corr.unstack()
+corr_unstacked = corr_unstacked[corr_unstacked < 1.0].sort_values(ascending=False)
+print(f"   {corr_unstacked.index[0]} → r = {corr_unstacked.iloc[0]:.2f}")
+
+print("\n3. Most separable feature:")
+print("   Petal dimensions — setosa is clearly distinct!")
+print("\n✅ Day 2 complete! Full EDA done. 5 charts saved.")
