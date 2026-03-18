@@ -70,14 +70,8 @@ numpy
 matplotlib
 scikit-learn
 jupyter
-```
-
-Install all at once:
-```bash
-pip install -r requirements.txt
-```
-
----
+pytorch
+KNN
 
 ## 🔍 Key Findings
 
