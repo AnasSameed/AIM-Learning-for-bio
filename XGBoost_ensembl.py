@@ -10,9 +10,9 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_auc_score, accuracy_score
 from xgboost import XGBClassifier
 
-# =============================================================
+# ============================================================
 # 1. LOAD & SPLIT DATA
-# =============================================================
+# ============================================================
 
 data = load_breast_cancer()
 X, y = data.data, data.target
