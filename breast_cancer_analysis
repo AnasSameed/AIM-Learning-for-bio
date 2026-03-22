@@ -1,0 +1,17 @@
+import pandas as pd
+import sqlite3
+
+conn = sqlite3.connect(":memory:")
+
+df = pd.DataFrame({
+    "name": ["Ali","Priya","Ravi","Sara","John"],
+    "age": [34,45,28,52,61],
+    "disease": ["diabetes","cancer","diabetes","hypertension","cancer"],
+    "score": [7.2,9.1,6.5,8.0,9.8]
+})
+
+df.to_sql("patients", conn, index=False)  # DataFrame → SQL table
+
+# Now query with SQL on your pandas data!
+result = pd.read_sql("SELECT disease, AVG(score) as avg_score FROM patients GROUP BY disease", conn)
+print(result)
