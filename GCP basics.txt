@@ -1,0 +1,10 @@
+GCP vertex AI:
+
+# How to make chatgpt, make model, design and add api..
+# cursor is like VS code's cmd... (new)
+# go to google search --> "Claude API docs" and take code
+# google search --> "SDK python of Claude", take code of normal and stream and make own claude model in vscode
+# make wrapper (wrapper means to make our own model by doing some changes in existing models/code)
+
+Task:
+I have GCP access and I want to make webstie, i wanna pass api and choose model and do response... (ask to claude)
