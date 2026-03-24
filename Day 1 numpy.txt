@@ -1,10 +1,10 @@
 import numpy as np
 
-# ── 1. Creating arrays ───────────────────────────────────────
+# ── 1. Creating arrays ──────────────────────────────────────
 gene_expression = np.array([5.2, 3.8, 7.1, 2.4, 9.0, 4.5])
 print("Gene expression values:", gene_expression)
 
-# ── 2. Basic stats — used in EVERY ML project ────────────────
+# ── 2. Basic stats — used in EVERY ML project ───────────────
 print("\n── Stats ──")
 print("Mean:          ", np.mean(gene_expression))
 print("Std deviation: ", np.std(gene_expression))
