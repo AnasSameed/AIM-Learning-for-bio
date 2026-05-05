@@ -1,0 +1,97 @@
+
+# STEP 8: Random Forest ML Classifier
+
+install.packages("randomForest")
+install.packages("caret")
+install.packages("pROC")
+
+#library(randomForest)
+#library(caret)
+#library(pROC)
+
+set.seed(42)
+
+# Prepare data — use top 500 most variable DMRs for speed
+top500_idx    <- order(var_filter, decreasing = TRUE)[1:500]
+ml_data       <- methyl[, top500_idx]
+ml_data$Label <- clinical$Bad_outcome
+
+# Train/test split — 80/20
+train_idx <- createDataPartition(ml_data$Label, p = 0.8, list = FALSE)
+train_df  <- ml_data[train_idx, ]
+test_df   <- ml_data[-train_idx, ]
+
+cat("Training samples:", nrow(train_df), "\n")
+cat("Testing samples:", nrow(test_df), "\n")
+
+# Train Random Forest
+cat("Training Random Forest...\n")
+rf_model <- randomForest(
+  Label ~ .,
+  data       = train_df,
+  ntree      = 500,
+  importance = TRUE,
+  mtry       = 22  # sqrt(500)
+)
+
+print(rf_model)
+
+# Predict on test set
+predictions  <- predict(rf_model, test_df, type = "prob")[, 2]
+pred_class   <- predict(rf_model, test_df)
+actual       <- test_df$Label
+
+# Confusion matrix
+cat("\n--- Confusion Matrix ---\n")
+print(confusionMatrix(pred_class, actual))
+
+# ROC curve
+roc_obj <- roc(as.numeric(actual), predictions)
+auc_val <- auc(roc_obj)
+cat("\nAUC:", round(auc_val, 3), "\n")
+
+# Plot ROC
+roc_df <- data.frame(
+  FPR = 1 - roc_obj$specificities,
+  TPR = roc_obj$sensitivities
+)
+
+p_roc <- ggplot(roc_df, aes(x = FPR, y = TPR)) +
+  geom_line(color = "#e74c3c", size = 1.2) +
+  geom_abline(linetype = "dashed", color = "grey50") +
+  annotate("text", x = 0.65, y = 0.15,
+           label = paste0("AUC = ", round(auc_val, 3)),
+           size = 5, color = "#2c3e50", fontface = "bold") +
+  labs(title = "ROC Curve — Random Forest Classifier",
+       subtitle = "Predicting Bad Outcome from DMR Methylation",
+       x = "False Positive Rate", y = "True Positive Rate") +
+  theme_minimal(base_size = 13) +
+  theme(plot.title = element_text(face = "bold"))
+
+ggsave(paste0(plot_path, "ROC_curve.png"), p_roc, width = 7, height = 6, dpi = 300)
+
+# Feature importance — top 20 DMRs
+imp_df <- as.data.frame(importance(rf_model))
+imp_df$DMR <- rownames(imp_df)
+imp_df <- imp_df[order(imp_df$MeanDecreaseGini, decreasing = TRUE), ]
+top20_imp <- head(imp_df, 20)
+
+p_imp <- ggplot(top20_imp, aes(x = reorder(DMR, MeanDecreaseGini),
+                               y = MeanDecreaseGini)) +
+  geom_bar(stat = "identity", fill = "#2c3e50") +
+  coord_flip() +
+  labs(title = "Top 20 Most Important DMRs",
+       subtitle = "Random Forest Feature Importance (Mean Decrease Gini)",
+       x = "DMR Region", y = "Importance Score") +
+  theme_minimal(base_size = 11) +
+  theme(plot.title = element_text(face = "bold"))
+
+ggsave(paste0(plot_path, "feature_importance.png"), p_imp,
+       width = 9, height = 7, dpi = 300)
+
+# Save top 20 important DMRs
+write.csv(top20_imp, paste0(
+  "C:/Users/User/Desktop/Dr. Aniruddha/Apr-May learnings/GSE308050/results/top20_important_DMRs.csv"),
+  row.names = FALSE)
+
+cat("\nML analysis complete. Check plots/ for ROC and importance plots.\n")

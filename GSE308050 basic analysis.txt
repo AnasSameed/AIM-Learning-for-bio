@@ -1,0 +1,54 @@
+
+# Prostate Cancer Methylation Analysis
+# Dataset: GSE308050
+
+#Load lib
+
+library(ggplot2)
+library(dplyr)
+
+# STEP 1: Load data
+
+df_raw <- read.csv(
+  gzfile("C:/Users/User/Desktop/Dr. Aniruddha/Apr-May learnings/GSE308050/GSE308050_All_merged_DMRs_sig_methy_group_clinics_infor.csv.gz"),
+  header = TRUE, row.names = 1, check.names = FALSE
+)
+
+cat("Raw dimensions:", dim(df_raw), "\n")
+cat("First few row names:\n")
+print(rownames(df_raw)[1:15])
+
+# STEP 2: Separate clinical and methylation data
+
+clinical_vars <- c("surg_pgleasnt", "surg_pstagt", "clinicalt",
+                   "recurrence", "Death", "Bad_outcome",
+                   "PSA_recurrence", "surg_lnmets", "surg_age", "risky")
+
+# Clinical matrix (10 variables x 120 patients) → transpose to patients x variables
+clinical <- as.data.frame(t(df_raw[clinical_vars, ]))
+clinical$Bad_outcome  <- as.factor(clinical$Bad_outcome)
+clinical$risky        <- factor(clinical$risky, levels = c("Low","Middle","High"))
+clinical$surg_age     <- as.numeric(clinical$surg_age)
+clinical$surg_pgleasnt <- as.numeric(clinical$surg_pgleasnt)
+
+# Methylation matrix → transpose to patients x DMRs
+dmr_rows   <- setdiff(rownames(df_raw), clinical_vars)
+methyl_raw <- df_raw[dmr_rows, ]
+methyl     <- as.data.frame(t(apply(methyl_raw, 1, as.numeric)))
+colnames(methyl) <- colnames(df_raw)
+methyl     <- as.data.frame(t(methyl))  # now patients x DMRs
+
+cat("Clinical data:", dim(clinical), "\n")
+cat("Methylation data:", dim(methyl), "\n")
+
+# STEP 3: Quick summary
+
+cat("\n--- Risk group distribution ---\n")
+print(table(clinical$risky))
+
+cat("\n--- Bad outcome distribution ---\n")
+print(table(clinical$Bad_outcome))
+
+cat("\n--- Age summary ---\n")
+print(summary(clinical$surg_age))
+
