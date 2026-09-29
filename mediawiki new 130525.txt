@@ -1,0 +1,636 @@
+<div style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 5px 10px; background-color: #00FF7F; color: white; text-align: center; border-radius: 5px; text-decoration: none; font-size: 10px;">
+    [http://10.148.66.48/wiki/index.php/Anas:Research WORKSPACE]
+</div>
+
+
+
+*README file- [[Media: README.txt.txt| README]]
+
+
+
+{| class="wikitable sortable" style="font-size: 12px; width: 100%; table-layout: auto; word-wrap: break-word; text-align: center;"
+|+ '''Scopus Search'''
+! style="background-color:#ADD8E6; width:10%;" | Sr. No
+! style="background-color:#ADD8E6; width:50%;" | Keywords
+! style="background-color:#ADD8E6; width:20%;" | No. of Papers
+! style="background-color:#ADD8E6; width:20%;" | Considered
+
+|-
+| 1
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( malt1 AND treg ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Signal Transduction" ) )'''
+| 11
+| 4
+|-
+| 2
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( foxp3 AND interacts AND ( c-rel OR nf-kappa AND b OR nf-kb ) ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) OR LIMIT-TO ( DOCTYPE , "re" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Transcription Factor FOXP3" ) OR LIMIT-TO ( EXACTKEYWORD , "Transcription Factor Rel" ) )'''
+| 7
+| 2
+|-
+| 3
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( il-2 AND receptor AND tregs AND foxp3 AND stat5 ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) OR LIMIT-TO ( DOCTYPE , "re" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Autoimmunity" ) )'''
+| 17
+| 5
+|-
+| 4
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( histone AND methylation AND treg ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Signal Transduction" ) OR LIMIT-TO ( EXACTKEYWORD , "Autoimmunity" ) OR LIMIT-TO ( EXACTKEYWORD , "Epigenetics" ) )’’’
+| 41
+| 10
+|-
+| 5
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( mll4 AND mice AND chromatin AND transcription AND factor ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Transcription Factor" ) OR LIMIT-TO ( EXACTKEYWORD , "Chromatin" ) )'''
+| 19
+| 3
+|-
+| 6
+| | <div style="text-align: left;"> '''TITLE-ABS-KEY ( setd2 AND inflammation ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) )'''
+| 19
+| 3
+|-
+| 7
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( foxp3 AND tet2 ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Forkhead Transcription Factor" ) )'''
+| 19
+| 6
+|-
+| 8
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( ezh2 AND foxp3 AND mice ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Signal Transduction" ) )'''
+| 9
+| 2
+|-
+| 9
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( bach2 AND foxp3 ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Regulatory T Lymphocyte" ) )'''
+| 15
+| 4
+|-
+| 10
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( mtor AND akt AND foxp3 AND treg ) AND ( LIMIT-TO ( EXACTKEYWORD , "Signal Transduction" ) OR LIMIT-TO ( EXACTKEYWORD , "Rapamycin" ) )'''
+| 19
+| 5
+|-
+| 11
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( stat4 AND treg AND foxp3 AND mice ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Forkhead Transcription Factors" ) )'''
+| 15 
+| 5
+|-
+| 12
+| <div style="text-align: left;"> '''TITLE-ABS-KEY ( foxp3 AND "regulatory T cells" AND ( methylation OR acetylation OR "histone modification" OR "chromatin remodeling" OR "epigenetic regulation" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "CpG Islands" ) OR LIMIT-TO ( EXACTKEYWORD , "Chromatin Immunoprecipitation" ) OR LIMIT-TO ( EXACTKEYWORD , "Acetylation" ) )'''
+| 65
+| 12
+|-
+| 13
+|  <div style="text-align: left;"> '''TITLE-ABS-KEY ( glycogen AND synthase AND kinase AND il-10 AND mice ) AND ( LIMIT-TO ( DOCTYPE , "ar" ) ) AND ( LIMIT-TO ( LANGUAGE , "English" ) ) AND ( LIMIT-TO ( EXACTKEYWORD , "Gene Expression" ) OR LIMIT-TO ( EXACTKEYWORD , "IL-10" ) )'''
+| 25
+| 4
+|-
+
+
+|-}
+
+{| class="wikitable sortable" style="font-size: 12px; width: 100%; table-layout: auto; word-wrap: break-word;"
+|+ '''References'''
+! style="background-color:#ADD8E6; width:5%; white-space: normal;" | Sr. No
+! style="background-color:#ADD8E6; width:40%; white-space: normal;" | Title
+! style="background-color:#ADD8E6; width:5%; white-space: normal;" | DOI
+! style="background-color:#ADD8E6; width:40%; white-space: normal;" | Interaction
+! style="background-color:#ADD8E6; width:5%; white-space: normal;" | Paper 
+! style="background-color:#ADD8E6; width:5%; white-space: normal;" | Research/ Review
+
+|- 
+! colspan="6" style="background-color:#FFB6C1;" | 1
+|-
+| 1
+| '''Bcl10 is required for the development and suppressive function of Foxp3+ regulatory T cells'''
+| [https://doi.org/10.1038/s41423-019-0297-y]
+| TCR to CBM complex to BCL10 ITAM in treg cell
+| [[Media: Bcl10 is required for the development and suppressive function of Foxp3+ regulatory T cells.pdf|PDF]]
+| Research
+|-
+| 2
+| '''Pharmacological Inhibition of MALT1 Ameliorates Autoimmune Pathogenesis and Can Be Uncoupled From Effects on Regulatory T-Cells''' 
+| [https://doi.org/10.3389/fimmu.2022.875320]
+| TCR to CBM complex to BCL10 ITAM in treg cell
+|[[Media: Pharmacological_Inhibition_of_MALT1_Ameliorates_Autoimmune_Pathogenesis_and_Can_Be_Uncoupled_From_Effects_on_Regulatory_T-Cells.pdf| PDF]]
+| Research
+|-
+| 3
+| '''
+Bcl10-controlled Malt1 paracaspase activity is key for the immune suppressive function of regulatory T cells''' 
+| [https://doi.org/10.1038/s41467-019-10203-2]
+| TCR to CBM complex to BCL10 ITAM in treg cell
+| [[Media: Bcl10-controlled Malt1 paracaspase activity is key for the immune suppressive function of regulatory T cells.pdf| PDF]]
+| Research
+|-
+| 4
+| '''CARMA1 Controls an Early Checkpoint in the Thymic Development of FoxP3+ Regulatory T Cells''' 
+| [https://doi.org/10.4049/jimmunol.0900498]
+| TCR to CBM complex to BCL10 ITAM and then NF-kB to IL2/STAT5 signaling in treg cell
+| [[Media: .pdf| PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 2
+|-
+| 1
+| '''Foxp3 Interacts with c-Rel to Mediate NF-κB Repression]
+| [https://doi.org/10.1371/journal.pone.0018670] 
+| Examines Foxp3 and NF-κB interaction.. interaction of NFAT c-rel with NF-kB promotes FOXP3 and also IL2 expression
+| [[Media: Foxp3_Interacts_with_c-Rel_to_Mediate_NF-kB_Repression.pdf| PDF]]
+|Research
+|-
+| 2
+| '''Foxp3 interacts with nuclear factor of activated T cells and NF-kappa B to repress cytokine gene expression and effector functions of T helper cells'''
+| [https://doi.org/10.1073/pnas.0501675102]
+| Examines Foxp3 and NF-κB interaction.. interaction of NFAT c-rel with NF-kB promotes FOXP3 and also IL2 expression
+| [[Media: Foxp3 interacts with nuclear factor of activated T cells and NF-κB to repress cytokine gene expression and effector functions of T helper cells.pdf | PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 3
+|-
+| 1
+| '''IL-2 receptor β-dependent STAT5 activation is required for the development of Foxp3+ regulatory T cells]
+| [https://doi.org/10.4049/jimmunol.178.1.280]
+| IL2/JAK-STAT5. NFkB mediated CBM initiate IL2 then_STAT5_FOXP3_epigenetic modifications were observed
+| [[Media: IL-2_Receptor_β-Dependent_STAT5_Activation_Is_Required_for_the_Development_of_Foxp3+_Regulatory_T_Cells.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Sustained in vivo signaling by long-lived IL-2 induces prolonged increases of regulatory T cells'''
+| [https://doi.org/10.1016/j.jaut.2014.10.002]
+| IL2/JAK-STAT5. then_STAT5_FOXP3_epigenetic modifications were observed
+| [[Media: .pdf| PDF]]
+| Research
+|-
+| 3
+| '''A long-lived IL-2 mutein that selectively activates and expands regulatory T cells as a therapy for autoimmune disease'''
+| [https://doi.org/10.1016/j.jaut.2018.10.017]
+| IL2/JAK-STAT5. ctla4 role in maintaining FOXP3+ Tregs
+| [[Media: A_long-lived_IL-2_mutein_that_selectively_activates_and_expands_regulatory_T_cells_as_a_therapy_for_autoimmune_disease.pdf| PDF]]
+| Research
+|-
+| 4
+| '''PP2A enables IL-2 signaling by preserving IL-2Rβ chain expression during Treg development'''
+| [https://doi.org/10.1172/jci.insight.126294]
+| PP2A inhibits ADAM10 and helps in FOXP3 promotion in tregs. new article and new information. ADAM10 tries to inhibit CD25 IL2Rbeta receptor to inhibit but PP2A helps to prevent. studied in mice model, spleenic and thymus derived Tregs.
+| [[Media: PP2A_enables_IL-2_signaling_by_preserving_IL-2Rβ_chain_expression_during_Treg_development.pdf| PDF]]
+| Research
+|-
+| 5
+| '''Fast and Efficient Genome Editing of Human FOXP3+ Regulatory T Cells'''
+| [https://doi.org/10.3389/fimmu.2021.655122]
+| IL2 STAT5 also happens in Human cells the same way. also tells about role of IL6 IL6R in inhibitng FOXP3 and promoting RORgt
+| [[Media: Fast_and_Efficient_Genome_Editing_of_Human_FOXP3+_Regulatory_T_Cells.pdf| PDF]]
+| Research
+|-
+
+! colspan="6" style="background-color:#FFB6C1;" | 4
+|-
+| 1
+| '''Two histone/protein acetyltransferases, CBP and p300, are indispensable for Foxp3+ T-regulatory cell development and function'''
+| [https://doi.org/10.1128/MCB.00919-14]
+|
+| [[Media: Two Histone Protein Acetyltransferases  CBP and p300  Are Indispensable for Foxp3  T-Regulatory Cell Development and Function.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Methyltransferase Setd2 prevents T cell-mediated autoimmune diseases via phospholipid remodeling''' 
+| [https://doi.org/10.1073/pnas.2314561121]
+|
+| [[Media: Methyltransferase Setd2 prevents T cell–mediated autoimmune diseases via phospholipid remodeling.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Epigenetic Regulation of Foxp3 Expression in Regulatory T Cells by DNA Methylation'''
+| [https://doi.org/10.4049/jimmunol.182.1.259]
+| Aza role in Histone acetylation and DNMT; Mbd2/MeCP2 dual role with TET (as positive recruiter) and DNMT as (negative recruiter to inhibit foxp3)
+| [[Media: Epigenetic Regulation of Foxp3 Expression in Regulatory T Cells by DNA Methylation.pdf| PDF]]
+| Research
+|-
+| 4
+| '''Mbd2 promotes foxp3 demethylation and T-regulatory-cell function''' 
+| [https://doi.org/10.1128/MCB.00144-13]
+| 
+| [[Media: Mbd2 Promotes Foxp3 Demethylation and T-Regulatory-Cell Function.pdf| PDF]]
+| Research
+|-
+| 5
+| '''Epigenetic control of the foxp3 locus in regulatory T cells'''
+| [https://doi.org/10.1371/journal.pbio.0050038]
+| TGF beta mediated foxp3
+| [[Media: Epigenetic Control of the foxp3 Locus in Regulatory T Cells.pdf| PDF]]
+| Research
+|-
+| 6
+| '''Ash1l and lnc-Smad3 coordinate Smad3 locus accessibility to modulate iTreg polarization and T cell autoimmunity''' 
+| [https://doi.org/10.1038/ncomms15818]
+| Ash1l promote SMAD3 in promoter region for foxp3 induction
+| [[Media: Ash1l and lnc-Smad3 coordinate Smad3 locus accessibility to modulate iTreg polarization and T cell autoimmunity.pdf| PDF]]
+| Research
+|-
+| 7
+| '''T cell receptor signaling controls Foxp3 expression via PI3K, Akt, and mTOR'''
+| [https://doi.org/10.1073/pnas.0800928105]
+|
+| [[Media: T_cell_receptor_signaling_controls_Foxp3_expression_via_PI3K,_Akt,_and_mTOR.pdf| PDF]]
+| Research
+|-
+| 8
+| '''Recruitment of Histone Methyltransferase Ehmt1 to Foxp3 TSDR Counteracts Differentiation of Induced Regulatory T Cells''' 
+| [https://doi.org/10.1016/j.jmb.2019.07.031]
+| Wiz --> ehmt1 (i have given as HMT) helps in H3k9
+| [[Media: Recruitment of Histone Methyltransferase Ehmt1 to Foxp3 TSDR Counteracts Differentiation of Induced Regulatory T Cells.pdf| PDF]]
+| Research
+|-
+| 9
+| '''PRMT5 regulates epigenetic changes in suppressive Th1-like iTregs in response to IL-12 treatment'''
+| [https://doi.org/10.3389/fimmu.2023.1292049]
+| PRMT5 helps to H3R2me2s (arginine methylation) and it blocks SIRT1 which then helps foxp3 induction
+| [[Media: PRMT5 regulates epigenetic changes in suppressive Th1-like iTregs in response to IL-12 treatment.pdf| PDF]]
+| Research
+|-
+| 10
+| '''Hyperactivating EZH2 to augment H3K27me3 levels in regulatory T cells enhances immune suppression by driving early effector differentiation'''
+| [https://doi.org/10.1016/j.celrep.2024.114724]
+| role of EZH2 in mediating H3K27me3 in tregs. in Naive CD28 marker helps to activate EZH2 and when differentiate to tregs EZH2 remains in CD25 tregs
+| [[Media: Hyperactivating_EZH2_to_augment_H3K27me3_levels_in_regulatory_T_cells_enhances_immune_suppression_by_driving_early_effector_differentiation.pdf | PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 5
+|-
+| 1
+| '''MLL4 prepares the enhancer landscape for Foxp3 induction via chromatin looping'''
+| [https://doi.org/10.1038/ni.3812]
+| MLL4 in chromatin regulation of Foxp3; MLL4 --> H3K4
+| [[Media: MLL4 prepares the enhancer landscape for Foxp3 induction via chromatin looping.pdf| PDF]]
+| Research
+|-
+| 2
+| '''H3K4 mono- and di-methyltransferase MLL4 is required for enhancer activation during cell differentiation'''
+| [https://doi.org/10.7554/eLife.01503]
+| MLL3/4 --> H3K4me3, sometimes H3K27me3 also
+| [[Media: H3K4 mono- and di-methyltransferase MLL4 is required for enhancer activation during cell differentiation.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Regulation of T helper cell differentiation by the interplay between histone modification and chromatin interaction'''
+| [https://doi.org/10.1016/j.immuni.2024.03.018]
+| MLL4 in chromatin regulation of Foxp3; MLL4 --> H3K4; also GATA3 can also play dual role here mediating H3K4me3 to facilitate foxp3 induction.
+| [[Media: Regulation_of_T_helper_cell_differentiation_by_the_interplay_of_histone_and_chromatin.pdf | PDF]]
+| Research
+|-
+
+! colspan="6" style="background-color:#FFB6C1;" | 6
+|-
+| 1
+| '''Setd2 supports GATA3+ST2+ thymic-derived Treg cells and suppresses intestinal inflammation'''
+| [https://doi.org/10.1038/s41467-022-35250-0]
+| this paper tells that SETD2 play role in GATA3, interacting with H3K27me3, TGF beta but in intestinal Tregs
+| [[Media: Setd2 supports GATA3+ST2+ thymic-derived Treg cells and suppresses intestinal inflammation.pdf| PDF]]
+| Research
+|-
+|2
+| '''Methyltransferase Setd2 prevents T cell-mediated autoimmune diseases via phospholipid remodeling'''
+| [https://doi.org/10.1073/pnas.2314561121]
+| SETD2 → H3K36me3 → LPCAT4 → PC(16:0,18:2) → ↓HIF-1α → ↑FOXP3⁺ Treg is a logical and literature-supported pathway
+| [[Media: Methyltransferase Setd2 prevents T cell–mediated autoimmune diseases via phospholipid remodeling.pdf| PDF]]
+| Research
+|-
+|3
+| '''The histone methyltransferase SETD2 modulates oxidative stress to attenuate experimental colitis'''
+| [https://doi.org/10.1016/j.redox.2021.102004]
+| SETD2 inhibits ROS in colonic inflammation CD4 cell
+| [[Media: The histone methyltransferase SETD2 modulates oxidative stress to attenuate experimental colitis.pdf| PDF]]
+| Research
+
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 7
+|-
+| 1
+| '''Hydrogen Sulfide Promotes Tet1- and Tet2-mediated Foxp3 Demethylation to Drive Regulatory T Cell Differentiation and Maintain Immune Homeostasis'''
+| [https://doi.org/10.1016/j.immuni.2015.07.017]
+| STAT5 --> H2S & Vitamin C --> TET --> FOXP3
+| [[Media: Hydrogen Sulfide Promotes Tet1- and Tet2-Mediated.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Improvement of Foxp3 stability through CNS2 demethylation by TET enzyme induction and activation'''
+| [https://doi.org/10.1093/intimm/dxx049]
+| SMAD --> TET --> FOXP3
+| cannot download
+| Research
+|-
+| 3
+| '''Whole‐genome analysis of TET dioxygenase function in regulatory T cells'''
+| [https://doi.org/10.15252/embr.202152716]
+| TET enzymes are epi factor plays a crucial role in stabilising FOXP3 in tregs. also Vit C role
+| [[Media: Whole‐genome_analysis_of_TET_dioxygenase_function_in_regulatory_T_cells.pdf| PDF]]
+| Research
+|-
+| 4
+| '''Vitamin C Facilitates Demethylation of the Foxp3 Enhancer in a Tet-Dependent Manner'''
+| [https://doi.org/10.4049/jimmunol.1502352]
+| Vitamin C promotes TET activity in demethylation at CNS2, Vitamic C also inhibits DNMT methylation to promote FOXP3 expression
+| [[Media: Vitamin C Facilitates Demethylation of the Foxp3 Enhancer in a Tet-Dependent Manner.pdf| PDF]]
+| Research
+|-
+| 5
+| '''DNA Demethylation of the Foxp3 Enhancer Is Maintained through Modulation of Ten-Eleven- Translocation and DNA Methyltransferases'''
+| [https://doi.org/10.14348/molcells.2016.0276]
+| TET activity happens in demethylation at CNS2, demethylation of CpG island by TET to promote FOXP3 expression
+| [[Media: DNA_Demethylation_of_the_Foxp3_Enhancer_Is_Maintained_through_Modulation_of_Ten-Eleven-_Translocation_and_DNA_Methyltransferases.pdf | PDF]]
+| Research
+|-
+| 6
+| '''Control of Foxp3 stability through modulation of TET activity'''
+| [https://doi.org/10.1084/jem.20151438]
+| TET activity happens in demethylation at CNS2, demethylation of CpG island by TET to promote FOXP3 expression
+| [[Media: Control_of_Foxp3_stability_through_modulation_of_TET_activity.pdf | PDF]]
+| Research
+|-
+
+! colspan="6" style="background-color:#FFB6C1;" | 8
+|-
+| 1
+| '''Disruption of FOXP3–EZH2 Interaction Represents a Pathobiological Mechanism in Intestinal Inflammation'''
+| [https://doi.org/10.1016/j.jcmgh.2018.08.009]
+| interaction of STAT1, STAT3 with histone mod by EZH2 in FOXP3
+| [[Media: Disruption of FOXP3–EZH2 Interaction Represents a Pathobiological Mechanism in Intestinal Inflammation.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Inflammation-induced repression of chromatin bound by the transcription factor Foxp3 in regulatory T cells'''
+| [https://doi.org/10.1038/ni.2868]
+| EZH2 plays a role in maintaining FOXP3 by doing H3K27me3 which is an important histone repression marker, it also inhibits AKT under inflammation condition (autoimmune)
+| [[Media: Inflammation-induced_repression_of_chromatin_bound_by_the_transcription_factor_Foxp3_in_regulatory_T_cells.pdf | PDF]]
+| Research
+|-
+
+
+! colspan="6" style="background-color:#FFB6C1;" | 9
+|-
+| 1
+| '''Bach2 represses effector programs to stabilize Treg-mediated immune homeostasis'''
+| [https://doi.org/10.1038/nature12199]
+| Bach2 inhibits GATA3, T-bet, RORgammat
+| [[Media: BACH2_represses_effector_programs_to_stabilize_Treg-mediated_immune_homeostasis.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Bach2 attenuates IL-2R signaling to control Treg homeostasis and Tfr development'''
+|[https://doi.org/10.1016/j.celrep.2021.109096]
+| Bach2 inhibits STAT5 and Bach2 inhibits mTORC1 etc
+| [[Media: Bach2 attenuates IL-2R signaling to control Treg homeostasis and Tfr development.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Whole‐genome analysis of TET dioxygenase function in regulatory T cells'''
+| [https://doi.org/10.15252/embr.202152716]
+| TET enzymes are epi factor plays a crucial role in stabilising FOXP3 in tregs. also Vit C role
+| [[Media: Whole‐genome_analysis_of_TET_dioxygenase_function_in_regulatory_T_cells.pdf| PDF]]
+| Research
+|-
+| 4
+| '''Attenuation of TCR-induced transcription by Bach2 controls regulatory T cell differentiation and homeostasis'''
+|[https://doi.org/10.1038/s41467-019-14112-2]
+| IRF4+AP-1 complex play a crucial role playing epi regulation, signaling and mediating the other TFs (CTLA4, BLIMP, IL10, Bach2, PRDM1)
+| [[Media: Attenuation_of_TCR-induced_transcription_by_Bach2_controls_regulatory_T_cell_differentiation_and_homeostasis.pdf| PDF]]
+| Research
+|-
+
+! colspan="6" style="background-color:#FFB6C1;" | 10
+|-
+| 1
+| '''Shikonin Controls the Differentiation of CD4+CD25+ Regulatory T Cells by Inhibiting AKT/mTOR Pathway'''
+| [https://doi.org/10.1007/s10753-019-00982-7]
+| PI3K/Akt/mTOR signaling network down-regulates Foxp3 in psoriasis
+| [[Media: Shikonin_Controls_the_Differentiation_of_CD4+CD25+_Regulatory_T_Cells_by_Inhibiting_AKTmTOR_Pathway.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Anti-inflammatory Roles of Glucocorticoids Are Mediated by Foxp3+ Regulatory T Cells via a miR-342-Dependent Mechanism'''
+| [https://doi.org/10.1016/j.immuni.2020.07.002]
+|
+| [[Media: Anti-inflammatory_Roles_of_Glucocorticoids_Are_Mediated_by_Foxp3+_Regulatory_T_Cells_via_a_miR-342-Dependent_Mechanism.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Daurinol Attenuates Autoimmune Arthritis via Stabilization of Nrp1–PTEN–Foxp3 Signaling in Regulatory T Cells'''
+| [https://doi.org/10.3389/fimmu.2019.01526]
+| Daurinol compound helps to increase PTEN activity ultimately induce FOXP3
+| [[Media: Daurinol_Attenuates_Autoimmune_Arthritis_via_Stabilization_of_Nrp1–PTEN–Foxp3_Signaling_in_Regulatory_T_Cells.pdf| PDF]]
+| Research
+|-
+| 4
+| '''OX40 Costimulation Inhibits Foxp3 Expression and Treg Induction via BATF3-Dependent and Independent Mechanisms'''
+| [https://doi.org/10.1016/j.celrep.2018.06.052]
+| •
+OX40 costimulation upregulates BATF3 and BATF expression in activated CD4+ T cells
+•
+BATF proteins are potent repressors of Foxp3 expression
+•
+Suppression function of BATF proteins is dependent on histone deacetylases Sirt1/7
+•
+OX40 also activates the AKT-mTOR pathway to suppress Foxp3 expression
+| [[Media: .pdf| PDF]]
+| Research
+|-
+| 5
+| '''T cell receptor signaling controls Foxp3 expression via PI3K, Akt, and mTOR'''
+| [https://doi.org/10.1073/pnas.0800928105]
+| PI3K/AKT/mTOR pathwat role in H3K4me3 histone mod. ultimately induce FOXP3
+| [[Media: .pdf| PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 11
+|-
+|1
+| '''Signal transducer and activator of transcription 4 limits the development of adaptive regulatory T cells''' 
+| [https://doi.org/10.1111/j.1365-2567.2008.03037.x]
+| IL12/STAT4 inhibits FOXP3
+| [[Media: Signal transducer and activator of transcription 4 limits the development of adaptive regulatory T cells.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Stat4 is critical for the balance between Th17 cells and regulatory T cells in colitis'''
+| [https://doi.org/10.4049/jimmunol.1004074]
+| 
+| [[Media: Stat4 Is Critical for the Balance between Th17 Cells and Regulatory T Cells in Colitis.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Antagonistic nature of T helper 1/2 developmental programs in opposing peripheral induction of Foxp3+ regulatory T cells'''
+| [https://doi.org/10.1073/pnas.0703642104]
+| Th1/Th2 cytokines like IFNγ and IL-4 inhibit TGF-β-induced FOXP3⁺ Treg differentiation by activating T-bet and GATA3. This negative cross-regulation explains why effector responses often dominate over peripheral Treg induction.
+| [[Media: .pdf| PDF]]
+| Research
+|-
+| 4
+| '''Cathepsin B inhibitor alleviates Th1, Th17, and Th22 transcription factor signaling dysregulation in experimental autoimmune encephalomyelitis'''
+| [https://doi.org/10.1016/j.expneurol.2022.113997]
+| CA-074 inhibits Cathepsin B; Cathepsin B induce FOXP3 induction
+| [[Media: Cathepsin_B_inhibitor_alleviates_Th1,_Th17,_and_Th22_transcription_factor.pdf| PDF]]
+| Research
+|-
+| 5
+| '''Daphnetin alleviates experimental autoimmune encephalomyelitis by suppressing Th1 and Th17 cells and upregulating Th2 and regulatory T cells'''
+| [https://doi.org/10.55782/ane-2022-026]
+| Daphnetin inhibits pro-inflammatory cytokines such as IL4, IL10, IFNG and promotes GATA3, FOXP3 TFs
+| [[Media: Daphnetin_alleviates_experimental_autoimmune_encephalomyelitis_by_suppressing_Th1_and_Th17_cells_and_upregulating_Th2_and_regulatory_T_cells.pdf| PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 12
+|-
+| 1
+| '''Whole‐genome analysis of TET dioxygenase function in regulatory T cells'''
+| [https://doi.org/10.15252/embr.202152716]
+| TET enzymes are epi factor plays a crucial role in stabilising FOXP3 in tregs. also Vit C role
+| [[Media: Whole‐genome_analysis_of_TET_dioxygenase_function_in_regulatory_T_cells.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Blimp1 Prevents Methylation of Foxp3 and Loss of Regulatory T Cell Identity at Sites of Inflammation'''
+| [https://doi.org/10.1016/j.celrep.2019.01.070]
+| Blimp1 inhibits Dnmt3a and prevents methylation of the Foxp3 locus
+
+  IL-6 contributes to methylation of the Foxp3 locus in a Dnmt3a-dependent manner
+
+  Blimp1 counteracts the IL-6-driven destabilization of Treg cells
+| [[Media: Blimp1_Prevents_Methylation_of_Foxp3_and_Loss_of_Regulatory_T_Cell_Identity_at_Sites_of_Inflammation.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Daurinol Attenuates Autoimmune Arthritis via Stabilization of Nrp1–PTEN–Foxp3 Signaling in Regulatory T Cells'''
+| [https://doi.org/10.3389/fimmu.2019.01526]
+| Daurinol compound helps to increase PTEN activity ultimately induce FOXP3
+| [[Media: Daurinol_Attenuates_Autoimmune_Arthritis_via_Stabilization_of_Nrp1–PTEN–Foxp3_Signaling_in_Regulatory_T_Cells.pdf| PDF]]
+| Research
+|-
+| 4
+| '''Epigenetic regulation of Foxp3 expression in regulatory T cells by DNA methylation''' 
+| [https://doi.org/10.4049/jimmunol.182.1.259]
+| Sp1, TIEG1 in mediating smad for epigenetic regulation of HAT and histones
+| [[Media: Epigenetic Regulation of Foxp3 Expression in Regulatory T Cells by DNA Methylation.pdf| PDF]]
+| Research
+|-
+| 5
+| '''Three Novel Acetylation Sites in the Foxp3 Transcription Factor Regulate the Suppressive Activity of Regulatory T Cells'''
+| [https://doi.org/10.4049/jimmunol.1100903]
+| SIRT1 as epigenetic marker 
+| [[Media: Three Novel Acetylation Sites in the Foxp3 Transcription Factor Regulate the Suppressive Activity of Regulatory T Cells.pdf| PDF]]
+| Research
+|-
+
+| 6
+| '''MeCP2 enforces Foxp3 expression to promote regulatory T cells’ resilience to inflammation''' 
+| [https://doi.org/10.1073/pnas.1401505111]
+| MeCP2 helps to recruit/promote CREB to do foxp3 stablization
+| [[Media: MeCP2 enforces Foxp3 expression to promoteregulatory T cells’ resilience to inflammation.pdf| PDF]]
+| Research
+|-
+| 7
+| '''Hypermethylation of MST1 in IgG4-related autoimmune pancreatitis and rheumatoid arthritis'''
+| [https://doi.org/10.1016/j.bbrc.2015.06.043]
+| TET enzymes produces MST1 and MST1 helps to stable foxp3 expression
+| [[Media: Hypermethylation of MST1 in IgG4-related autoimmune pancreatitis and rheumatoid arthritis.pdf| PDF]]
+| Research
+|-
+| 8
+| '''Hydrogen Sulfide Promotes Tet1- and Tet2-mediated Foxp3 Demethylation to Drive Regulatory T Cell Differentiation and Maintain Immune Homeostasis'''
+| [https://doi.org/10.1016/j.immuni.2015.07.017]
+| STAT5 --> H2S & Vitamin C --> TET --> FOXP3
+| [[Media: Hydrogen Sulfide Promotes Tet1- and Tet2-Mediated.pdf| PDF]]
+| Research
+|-
+| 9
+| '''The transcriptional coactivator TAZ regulates reciprocal differentiation of TH17 cells and Treg cells'''
+| [https://doi.org/10.1038/ni.3748]
+| role of PTM and TFs -- TAZ in treg cell
+| [[Media: The transcriptional coactivator TAZ regulates reciprocal differentiation of TH17 cells and Treg cells.pdf| PDF]]
+| Research
+|-
+| 10
+| '''Control of Foxp3 stability through modulation of TET activity'''
+| [https://doi.org/10.1084/jem.20151438]
+| TET activity happens in demethylation at CNS2, demethylation of CpG island by TET to promote FOXP3 expression
+| [[Media: Control_of_Foxp3_stability_through_modulation_of_TET_activity.pdf | PDF]]
+| Research
+|-
+| 11
+| '''A long-lived IL-2 mutein that selectively activates and expands regulatory T cells as a therapy for autoimmune disease'''
+| [https://doi.org/10.1016/j.jaut.2018.10.017]
+| IL2/JAK-STAT5. ctla4 role in maintaining FOXP3+ Tregs
+| [[Media: A_long-lived_IL-2_mutein_that_selectively_activates_and_expands_regulatory_T_cells_as_a_therapy_for_autoimmune_disease.pdf| PDF]]
+| Research
+|-
+| 12
+| '''Nicotinamide enhances Treg differentiation by promoting Foxp3 acetylation in immune thrombocytopenia'''
+| [https://doi.org/10.1111/bjh.19820]
+| NAD+ and NAM role in inhibiting SIRT1 to promote FOXP3; also they help in FOXP3 acetylation (by inhibiting to mTORC)
+| [[Media: Nicotinamide enhances Treg differentiation by promoting Foxp3 acetylation in immune thrombocytopenia.pdf| PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 13
+|-
+| 1
+| '''Cutting edge: Inhibition of glycogen synthase kinase 3 activity induces the generation and enhanced suppressive function of human IL-10+ FOXP3+–induced regulatory T cells'''
+| [https://doi.org/10.4049/jimmunol.2000136]
+| GSK3 inhibition role in epigenetics that is increased H3K4me3, H3K9Ac acetylation, c-Maf, IL10 production and then inhibited H3K27me3 epigenetic regulations. ultimately telling that, if GSK3beta is inhibited then it give rise to FOXP3 induction
+| [[Media: Cutting Edge Inhibition of Glycogen Synthase.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Glycogen synthase kinase-3 controls IL-10 expression in CD4+ effector T-cell subsets through epigenetic modification of the IL-10 promoter'''
+| [https://doi.org/10.1002/eji.201444661]
+|
+| [[Media: Glycogen synthase kinase-3 controls IL-10 expression in CD4+ effector T-cell subsets through epigenetic modification of the IL-10 promoter.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Convergence of the Mammalian Target of Rapamycin Complex 1- and Glycogen Synthase Kinase 3-β–Signaling Pathways Regulates the Innate Inflammatory Response'''
+| [https://doi.org/10.4049/jimmunol.1002513]
+| Rapamycin drug role in GSK3B mTORC and they also promote IL10 promotion
+| [[Media: Convergence_of_the_Mammalian_Target_of.pdf| PDF]]
+| Research
+|-
+| 4
+| '''AMIGO2 modulates T cell functions and its deficiency in mice ameliorates experimental autoimmune encephalomyelitis'''
+| [https://doi.org/10.1016/j.bbi.2017.01.009]
+| AMIGO2 deficiency increases AKT, T-bet (Th1), GATA3 (Th2) and decreases RORGT (Th17) activity
+| [[Media: AMIGO2_modulates_T_cell_functions_and_its_deficiency_in_mice_ameliorates_experimental_autoimmune_encephalomyelitis.pdf| PDF]]
+| Research
+|-
+! colspan="6" style="background-color:#FFB6C1;" | 14
+|-
+| 1
+| '''Protein Arginine Methyltransferase 5 Inhibition Upregulates Foxp3+ Regulatory T Cells Frequency and Function during the Ulcerative Colitis'''
+| [https://doi.org/10.3389/fimmu.2017.00596]
+| AMI-1 molecule helps to lessen the PRMT1 activity; PRMT1 role in PTM modification of H3R2me2s and inhibiting SIRT1 protein to maintain foxp3
+| [[Media: Protein Arginine Methyltransferase 5 Inhibition Upregulates Foxp3+ Regulatory T Cells Frequency and Function during the Ulcerative Colitis.pdf| PDF]]
+| Research
+|-
+| 2
+| '''Histone methylation mediates plasticity of human FOXP3+ regulatory T cells by modulating signature gene expressions'''
+| [https://doi.org/10.1111/imm.12198]
+| CTLA4, H3K4, H3K27 epigenetic makeup in tregs
+| [[Media: Histone methylation mediates plasticity of human FOXP3+ regulatory T cells by modulating signature gene expressions.pdf| PDF]]
+| Research
+|-
+| 3
+| '''Global Mapping of H3K4me3 and H3K27me3 Reveals Specificity and Plasticity in Lineage Fate Determination of Differentiating CD4+ T Cells''' 
+| [https://doi.org/10.1016/j.immuni.2008.12.009]
+| Epigenetic mechanisms in T-cell differentiation; H3K4me3 binds to FOXP3 promoter in itreg, ntregs
+| paper could'nt download
+| Research
+|-
+| 4
+| '''Epigenetic Control of the foxp3 Locus in Regulatory T Cells'''
+| [https://doi.org/10.1371/journal.pbio.0050038]
+| Epigenetic mechanisms in FOXP3 Tregs
+| [[Media: Epigenetic Control of the foxp3 Locus.pdf| PDF]]
+| Research
+|-
+| 5
+| '''Regulation of Treg functionality by acetylation-mediated Foxp3 protein stabilization'''
+| [https://doi.org/10.1182/blood-2009-02-207118]
+| H3 acetylation by HDAC is needed for stable FOXP3 function
+| [[Media: Regulation of Treg functionality by acetylation-mediated Foxp3 protein stabilization.pdf| PDF]]
+| Research
+|-
+|-}
