@@ -1,0 +1,12 @@
+# ORCA input: geometry optimization + frequencies for water
+# Run:  orca orca_water_opt_freq.inp > orca_water_opt_freq.out
+# Check output for: "ORCA TERMINATED NORMALLY", "THE OPTIMIZATION HAS CONVERGED",
+#                   "FINAL SINGLE POINT ENERGY", and zero imaginary frequencies.
+# For a transition state replace "Opt" with "OptTS" and expect exactly one imaginary frequency.
+! B3LYP D3BJ def2-SVP Opt Freq
+%pal nprocs 4 end
+* xyz 0 1
+O  0.000  0.000  0.000
+H  0.000  0.760  0.590
+H  0.000 -0.760  0.590
+*
