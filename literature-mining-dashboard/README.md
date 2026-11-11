@@ -35,7 +35,9 @@ Open `output/dashboard.html` in any browser. It is one self-contained file: char
 | `pubmed_client.py` | NCBI E-utilities client: esearch, batched efetch, XML parsing, retries and rate limiting |
 | `analyze_literature.py` | De-duplication (DOI, then PMID, then title), keyword topic tagging, summary tables |
 | `build_dashboard.py` | Builds the HTML dashboard and the PDF report |
+| `store_sqlite.py` | SQLite storage: unique PMID/DOI, authors and tags tables, search log, incremental loads, search queries |
 | `test_literature_pipeline.py` | 14 offline tests (parsing edge cases, dedupe, tagging, batching, outputs) |
+| `test_store_sqlite.py` | 8 tests for the database layer (re-runs add nothing, DOI case, shared authors, tags, SQL-injection safety, CLI) |
 | `sample_data/generate_sample_xml.py` | Generates the synthetic PubMed-format XML used for demos and tests |
 
 ## Design decisions
@@ -46,6 +48,16 @@ Open `output/dashboard.html` in any browser. It is one self-contained file: char
 - **Safe HTML.** Paper text is inserted with `textContent` and the embedded JSON is escaped, so abstract text cannot inject markup.
 - **PDF text.** The built-in PDF fonts cover Latin-1 only, so symbols such as the Greek letters are transliterated (for example `beta`).
 - **Polite to NCBI.** About 3 requests per second by default. Set `NCBI_EMAIL` and optionally `NCBI_API_KEY` (higher rate limit) in your environment.
+
+## Database (SQLite)
+
+```bash
+python store_sqlite.py load sample_data/pubmed_sample.xml --db literature.db --query "demo"
+python store_sqlite.py search --db literature.db --text hepatotox --topic "Machine Learning"
+python store_sqlite.py stats  --db literature.db
+```
+
+Tables: `papers`, `authors`, `paper_authors` (keeps author order), `tags`, `paper_tags`, `searches` (a log of every load). PMID and DOI are unique, so loading the same search again adds only new papers. SQLite is a single file with no server; the same schema ports to PostgreSQL if several people need to share it. Queries use bound parameters, not string-built SQL.
 
 ## Custom topics
 
@@ -70,5 +82,5 @@ python build_dashboard.py --input data/records.json --topics topics.json
 ## Next steps
 
 - Add Europe PMC and Crossref as extra sources behind the same record format.
-- Store records in SQLite so repeated runs only fetch new PMIDs.
+- Skip already-stored PMIDs before calling efetch (the database stores them; the client does not use it yet), and build the dashboard directly from the database.
 - Add an LLM-assisted summary step with a human review column.
